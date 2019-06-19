@@ -38,15 +38,16 @@ app.get("/scrape", function (req, res) {
     }
 
     var $ = cheerio.load(html);
+    //console.log("$", $);
     var result = {};
-
+    //#bodyContent > div.col2.left > div:nth-child(1) > div > div > a > p
     $("div .news").each(function (i, element) {
-
+      //console.log("element.children", $(element).children());
       var link = $(element).children().attr("href");
       result.link = "www.dw.com" + link;
       //console.log("$(element).children().text().trim()", $(element).children().text().trim());
       var title = $(element).children().text().trim();
-      //var summary = $(element).children().html();
+      var summary = $(element).find("p").text();
       //console.log("summary", summary);
       if (title.match(/\n/g)) {
         result.title = title.split("\n")[0];
@@ -59,7 +60,7 @@ app.get("/scrape", function (req, res) {
       db.Article.create(result)
         .then(function (dbArticle) {
           // View the added result in the console
-          console.log(dbArticle);
+          //console.log(dbArticle);
         })
         .catch(function (err) {
           // If an error occurred, send it to the client
